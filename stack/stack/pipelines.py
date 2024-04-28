@@ -36,14 +36,11 @@ class MongoDBPipeline(object):
         return cls(crawler)
 
     def process_item(self, item, spider):
-        valid = True
-        for data in item:
+        for key, data in item.items():
             if not data:
-                valid = False
-                raise DropItem(f"Missing data for field '{data}'!")
+                raise DropItem(f"Missing data for field '{key}'!")
 
-        if valid:
-            self.collection.insert_one(dict(item))  # Use insert_one for clarity
-            logger.debug("Question added to MongoDB database!", spider=spider)
+        self.collection.insert_one(dict(item))
+        logger.debug("Question added to MongoDB database!", spider=spider)
         return item
             
